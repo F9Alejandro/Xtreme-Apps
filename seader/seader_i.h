@@ -13,6 +13,7 @@
 #include <gui/scene_manager.h>
 #include <notification/notification_messages.h>
 #include <seader_icons.h>
+#include <assets_icons.h>
 
 #include <gui/modules/submenu.h>
 #include <gui/modules/popup.h>
