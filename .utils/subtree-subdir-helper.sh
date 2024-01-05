@@ -41,4 +41,4 @@ fi
 rm "$tmpfile"
 
 git checkout "${prev}"
-git subtree "${action}" -P "${path}" "${split}" -m \""${action^} ${path} from ${repo}"\"
+git subtree "${action}" -P "${path}" "${split}" -m "${action^}" "${path}" from "${repo}"
