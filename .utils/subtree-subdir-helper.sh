@@ -22,12 +22,23 @@ fetch="_fetch-${temp}"
 split="_split-${temp}-$(tr / - <<< "${subdir}")"
 git fetch --no-tags "${repo}" "${branch}:${fetch}"
 git checkout "${fetch}"
-exec 420>&1
-result="$(git subtree split -P "${subdir}" -b "${split}" 2>&1 | tee /dev/fd/420)"
-if grep "is not an ancestor of commit" <<< "$result" > /dev/null; then
+ # exec 420>&1
+ # result="$(git subtree split -P "${subdir}" -b "${split}" 2>&1 | tee /proc/self/fd/420)"
+ # if grep "is not an ancestor of commit" <<< "$result" > /dev/null; then
+ #     echo "Resetting split branch..."
+ #     git branch -D "${split}"
+ #     git subtree split -P "${subdir}" -b "${split}"
+ # fi
+
+# Using a temporary file instead of /proc/self/fd/
+tmpfile=$(mktemp /tmp/script.XXXXXX)
+result="$(git subtree split -P "${subdir}" -b "${split}" 2>&1 | tee "$tmpfile")"
+if grep "is not an ancestor of commit" "$tmpfile" > /dev/null; then
     echo "Resetting split branch..."
     git branch -D "${split}"
     git subtree split -P "${subdir}" -b "${split}"
 fi
+rm "$tmpfile"
+
 git checkout "${prev}"
 git subtree "${action}" -P "${path}" "${split}" -m "${action^} ${path} from ${repo}"
